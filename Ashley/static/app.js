@@ -1,6 +1,5 @@
 async function send() {
   const prompt = document.getElementById('prompt').value.trim();
-  const system = document.getElementById('system').value;
   const out = document.getElementById('out');
   const sendBtn = document.getElementById('send');
   if (!prompt) { out.textContent = 'Please enter a message.'; return; }
@@ -10,7 +9,7 @@ async function send() {
     const res = await fetch('/chat/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, system })
+      body: JSON.stringify({ prompt })
     });
     if (!res.ok) {
       const err = await res.text();
