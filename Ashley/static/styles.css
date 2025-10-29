@@ -1,0 +1,10 @@
+* { box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #fafafa; color: #222; margin: 0; }
+.container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+label { display: block; font-size: 14px; margin: 1rem 0 0.5rem; }
+textarea { width: 100%; min-height: 120px; padding: 0.75rem; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+.row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin: 1rem 0; }
+input[type="number"], input[type="text"] { padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; }
+button { padding: 0.6rem 1rem; font-size: 14px; border: none; background: #2563eb; color: #fff; border-radius: 8px; cursor: pointer; }
+button:hover { background: #1d4ed8; }
+.out { white-space: pre-wrap; background: #fff; padding: 1rem; border-radius: 8px; border: 1px solid #eee; min-height: 3rem; }

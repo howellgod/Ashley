@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Azure OpenAI Agent</title>
+  <link rel="stylesheet" href="/static/styles.css?v=3" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Agent Ashley</h1>
+
+      <label for="system">System prompt</label>
+      <textarea id="system">You are a helpful assistant.</textarea>
+
+      <label for="prompt">Your message</label>
+      <div class="row">
+        <textarea id="prompt" placeholder="Type your message..." style="flex:1"></textarea>
+        <button id="send">Send</button>
+      </div>
+
+      <h3>Response</h3>
+      <div id="out" class="out"></div>
+    </div>
+
+  <script src="/static/app.js?v=3"></script>
+  </body>
+</html>
