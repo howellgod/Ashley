@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from .agent import build_client, chat_example, chat_stream, get_env
 
-app = FastAPI(title="Azure OpenAI Agent")
+app = FastAPI(title="Agent Ashley")
 
 # Build the Azure OpenAI client once per process
 aoai_client = build_client()
