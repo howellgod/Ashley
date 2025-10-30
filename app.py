@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -10,10 +11,25 @@ from Ashley.agent import build_client, chat_example, chat_stream, get_env
 
 app = FastAPI(title="Agent Ashley")
 
-# Build the Azure OpenAI client once per process
-aoai_client = build_client()
-# Read the default deployment from env; allow overrides per request
-default_deployment = get_env("AZURE_OPENAI_DEPLOYMENT")
+# Lazy-initialized Azure OpenAI client and deployment
+aoai_client = None  # type: ignore
+default_deployment: Optional[str] = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+
+
+@app.on_event("startup")
+def _init_clients() -> None:
+    """Initialize the Azure OpenAI client at startup without crashing the app
+    if environment variables are missing. Requests will surface a clear 503.
+    """
+    global aoai_client, default_deployment
+    try:
+        aoai_client = build_client()
+        if not default_deployment:
+            # Only require the deployment if not provided per-request
+            default_deployment = get_env("AZURE_OPENAI_DEPLOYMENT", required=False)
+    except Exception as e:
+        # Don't crash on startup; log a hint. Handlers will check and return 503.
+        print(f"[startup] Azure OpenAI client init failed: {e}")
 
 # Static files and templates (live under the package directory 'Ashley')
 BASE_DIR = Path(__file__).parent
@@ -42,7 +58,18 @@ def health() -> dict:
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest) -> ChatResponse:
     try:
+        if aoai_client is None:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Service not configured. Set AZURE_OPENAI_ENDPOINT, "
+                    "AZURE_OPENAI_API_KEY, and AZURE_OPENAI_DEPLOYMENT in App Settings."
+                ),
+            )
+
         deployment = req.deployment or default_deployment
+        if not deployment:
+            raise HTTPException(status_code=503, detail="Missing deployment name. Set AZURE_OPENAI_DEPLOYMENT or pass 'deployment'.")
         content = chat_example(
             client=aoai_client,
             deployment=deployment,
@@ -61,7 +88,17 @@ def chat(req: ChatRequest) -> ChatResponse:
 def chat_streaming(req: ChatRequest):
     """Stream the model response tokens as plain text chunks."""
     try:
+        if aoai_client is None:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Service not configured. Set AZURE_OPENAI_ENDPOINT, "
+                    "AZURE_OPENAI_API_KEY, and AZURE_OPENAI_DEPLOYMENT in App Settings."
+                ),
+            )
         deployment = req.deployment or default_deployment
+        if not deployment:
+            raise HTTPException(status_code=503, detail="Missing deployment name. Set AZURE_OPENAI_DEPLOYMENT or pass 'deployment'.")
 
         def token_gen():
             for token in chat_stream(
