@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from pydantic import BaseModel, Field
 
-from .Ashley.agent import build_client, chat_example, chat_stream, get_env
+from Ashley.agent import build_client, chat_example, chat_stream, get_env
 
 app = FastAPI(title="Agent Ashley")
 
@@ -15,10 +15,11 @@ aoai_client = build_client()
 # Read the default deployment from env; allow overrides per request
 default_deployment = get_env("AZURE_OPENAI_DEPLOYMENT")
 
-# Static files and templates
+# Static files and templates (live under the package directory 'Ashley')
 BASE_DIR = Path(__file__).parent
-app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
-templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+PACKAGE_DIR = BASE_DIR / "Ashley"
+app.mount("/static", StaticFiles(directory=str(PACKAGE_DIR / "static")), name="static")
+templates = Jinja2Templates(directory=str(PACKAGE_DIR / "templates"))
 
 
 class ChatRequest(BaseModel):
