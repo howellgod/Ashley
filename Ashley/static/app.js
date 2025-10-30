@@ -2,9 +2,11 @@ async function send() {
   const prompt = document.getElementById('prompt').value.trim();
   const out = document.getElementById('out');
   const sendBtn = document.getElementById('send');
+  const overlay = document.getElementById('loading');
   if (!prompt) { out.textContent = 'Please enter a message.'; return; }
   out.textContent = '';
   sendBtn.disabled = true;
+  if (overlay) overlay.classList.add('show');
   try {
     const res = await fetch('/chat/stream', {
       method: 'POST',
@@ -14,12 +16,10 @@ async function send() {
     if (!res.ok) {
       const err = await res.text();
       out.textContent = `Error ${res.status}: ${err}`;
-      sendBtn.disabled = false;
       return;
     }
     if (!res.body) {
       out.textContent = 'Streaming not supported by the browser/connection.';
-      sendBtn.disabled = false;
       return;
     }
     const reader = res.body.getReader();
@@ -37,6 +37,7 @@ async function send() {
     out.textContent = 'Network error: ' + (e?.message || e);
   } finally {
     sendBtn.disabled = false;
+    if (overlay) overlay.classList.remove('show');
   }
 }
 

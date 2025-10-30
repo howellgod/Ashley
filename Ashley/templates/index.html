@@ -3,10 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Agent Ashley</title>
+  <title>Agent Ashley</title>
+  <link rel="icon" href="/static/favicon.png" type="image/png" />
+  <link rel="shortcut icon" href="/static/favicon.png" type="image/png" />
   <link rel="stylesheet" href="/static/styles.css?v=5" />
   </head>
   <body>
+    <!-- Loading overlay -->
+    <div id="loading" class="loading-overlay" aria-hidden="true">
+      <div class="loading-content" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <div class="loading-text">Thinking…</div>
+      </div>
+    </div>
+
     <div class="container">
       <h1>Agent Ashley</h1>
 
